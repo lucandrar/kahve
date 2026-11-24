@@ -52,22 +52,9 @@ export default function App() {
     }
   }, [setCurrentView])
 
-  // If standalone /siparis route is requested, render the dedicated Order page
-  if (currentView === 'siparis') {
-    return <OrderPage />
-  }
-
-  // If standalone /kvkk route is requested, render the dedicated KVKK page
-  if (currentView === 'kvkk') {
-    return <KVKKPage />
-  }
-
-  // If secret admin URL is accessed, render the executive Admin Terminal
-  if (currentView === 'admin') {
-    return <AdminPanel />
-  }
-
   useEffect(() => {
+    if (currentView !== 'home') return
+
     const lenis = new Lenis({
       duration: 1.15,
       easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
@@ -116,7 +103,20 @@ export default function App() {
       lenis.destroy()
       cancelAnimationFrame(animId)
     }
-  }, [])
+  }, [currentView])
+
+  // ALL HOOKS ARE CALLED AT THE TOP. NOW RENDER CONDITIONALLY:
+  if (currentView === 'siparis') {
+    return <OrderPage />
+  }
+
+  if (currentView === 'kvkk') {
+    return <KVKKPage />
+  }
+
+  if (currentView === 'admin') {
+    return <AdminPanel />
+  }
 
   return (
     <div className="relative min-h-screen text-[#2C1D18] bg-[#F4F0EB] transition-colors duration-1000 overflow-x-hidden selection:bg-[#2C1D18] selection:text-[#F4F0EB]">
@@ -141,7 +141,7 @@ export default function App() {
       {/* High-Performance 60 FPS 3D WebGL Canvas Layer (Fixed, z-10) */}
       <Scene />
 
-      {/* Main Content Sections (Scrollable DOM Layer, without z-index on main so Hero z-0 stays behind Scene z-10 and other sections sit at z-20) */}
+      {/* Main Content Sections (Scrollable DOM Layer) */}
       <main className="relative flex flex-col">
         <Hero />
         <FlavorSelector />
